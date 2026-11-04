@@ -12,18 +12,29 @@ jobs:
       - name: Install XcodeGen
         run: brew install xcodegen
 
+      - name: Setup project
+        run: |
+          SPEC=$(find . -name "project.yml" | head -1)
+          DIR=$(dirname $SPEC)
+          ICON=$(find . -name "icon.png" | head -1)
+          echo "Project: $DIR, Icon: $ICON"
+          mkdir -p "$DIR/Sources/Assets.xcassets/AppIcon.appiconset"
+          cp "$ICON" "$DIR/Sources/Assets.xcassets/AppIcon.appiconset/icon.png"
+          printf '{"images":[{"filename":"icon.png","idiom":"universal","platform":"ios","size":"1024x1024"}],"info":{"author":"xcode","version":1}}' > "$DIR/Sources/Assets.xcassets/AppIcon.appiconset/Contents.json"
+          printf '{"info":{"author":"xcode","version":1}}' > "$DIR/Sources/Assets.xcassets/Contents.json"
+          echo "settings:" >> "$SPEC"
+          echo "  ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon" >> "$SPEC"
+
       - name: Generate Xcode project
         run: |
           SPEC=$(find . -name "project.yml" | head -1)
-          echo "Found spec: $SPEC"
           cd "$(dirname $SPEC)"
           xcodegen generate
 
       - name: Build archive
         run: |
           SPEC=$(find . -name "project.yml" | head -1)
-          DIR=$(dirname $SPEC)
-          cd "$DIR"
+          cd "$(dirname $SPEC)"
           xcodebuild archive \
             -project FakeAdservio.xcodeproj \
             -scheme FakeAdservio \
@@ -36,8 +47,7 @@ jobs:
       - name: Package IPA
         run: |
           SPEC=$(find . -name "project.yml" | head -1)
-          DIR=$(dirname $SPEC)
-          cd "$DIR"
+          cd "$(dirname $SPEC)"
           mkdir -p Payload
           cp -r FakeAdservio.xcarchive/Products/Applications/FakeAdservio.app Payload/
           zip -r FakeAdservio.ipa Payload/
