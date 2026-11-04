@@ -14,12 +14,16 @@ jobs:
 
       - name: Generate Xcode project
         run: |
-          cd fake-adservio
+          SPEC=$(find . -name "project.yml" | head -1)
+          echo "Found spec: $SPEC"
+          cd "$(dirname $SPEC)"
           xcodegen generate
 
       - name: Build archive
         run: |
-          cd fake-adservio
+          SPEC=$(find . -name "project.yml" | head -1)
+          DIR=$(dirname $SPEC)
+          cd "$DIR"
           xcodebuild archive \
             -project FakeAdservio.xcodeproj \
             -scheme FakeAdservio \
@@ -31,7 +35,9 @@ jobs:
 
       - name: Package IPA
         run: |
-          cd fake-adservio
+          SPEC=$(find . -name "project.yml" | head -1)
+          DIR=$(dirname $SPEC)
+          cd "$DIR"
           mkdir -p Payload
           cp -r FakeAdservio.xcarchive/Products/Applications/FakeAdservio.app Payload/
           zip -r FakeAdservio.ipa Payload/
@@ -40,4 +46,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: FakeAdservio
-          path: fake-adservio/FakeAdservio.ipa
+          path: "**/FakeAdservio.ipa"
