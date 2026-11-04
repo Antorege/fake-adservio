@@ -1,0 +1,21 @@
+name: FakeAdservio
+options:
+  bundleIdPrefix: com.fake
+  deploymentTarget:
+    iOS: "15.6"
+targets:
+  FakeAdservio:
+    type: application
+    platform: iOS
+    sources:
+      - Sources
+    info:
+      path: Sources/Info.plist
+      properties:
+        CFBundleName: Adservio
+        CFBundleDisplayName: Adservio
+        UILaunchStoryboardName: ""
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        UIApplicationSupportsIndirectInputEvents: true
+        UIRequiresFullScreen: true
