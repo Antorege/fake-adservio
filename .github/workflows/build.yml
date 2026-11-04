@@ -17,9 +17,9 @@ jobs:
           SPEC=$(find . -name "project.yml" | head -1)
           DIR=$(dirname $SPEC)
           ICON=$(find . -name "icon.png" | head -1)
-          echo "Project: $DIR, Icon: $ICON"
           mkdir -p "$DIR/Sources/Assets.xcassets/AppIcon.appiconset"
           cp "$ICON" "$DIR/Sources/Assets.xcassets/AppIcon.appiconset/icon.png"
+          sips -z 1024 1024 "$DIR/Sources/Assets.xcassets/AppIcon.appiconset/icon.png"
           printf '{"images":[{"filename":"icon.png","idiom":"universal","platform":"ios","size":"1024x1024"}],"info":{"author":"xcode","version":1}}' > "$DIR/Sources/Assets.xcassets/AppIcon.appiconset/Contents.json"
           printf '{"info":{"author":"xcode","version":1}}' > "$DIR/Sources/Assets.xcassets/Contents.json"
           echo "settings:" >> "$SPEC"
